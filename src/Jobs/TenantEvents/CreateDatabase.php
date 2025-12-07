@@ -18,13 +18,13 @@ class CreateDatabase extends TenantEventQueue
             case 'sqlite':
                 $databasePath = database_path($databaseName.'.sqlite');
 
-                if ( ! file_exists($databasePath)) {
+                if (! file_exists($databasePath)) {
                     touch($databasePath);
                 }
                 break;
             case 'pgsql':
                 if (DB::selectOne(
-                /** @lang PostgreSQL */ "SELECT 1 FROM pg_database WHERE datname = ?",
+                    /** @lang PostgreSQL */ 'SELECT 1 FROM pg_database WHERE datname = ?',
                     [$databaseName])
                 ) {
                     break;

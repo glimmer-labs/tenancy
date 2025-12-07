@@ -17,20 +17,20 @@ trait HasTenantEvents
         collect(Config::get('multitenancy.tenant_events', []))->each(function ($array, $event) {
             $jobs = collect($array)
                 ->except('catch')
-                ->filter(fn($job) => class_exists($job) && is_subclass_of($job, TenantEventQueue::class));
+                ->filter(fn ($job) => class_exists($job) && is_subclass_of($job, TenantEventQueue::class));
 
             if ($jobs->count() < 1) {
                 return;
             }
 
-            if (isset($array['catch']) && (!class_exists($array['catch']) || !is_subclass_of($array['catch'], EventExceptionHandler::class))) {
+            if (isset($array['catch']) && (! class_exists($array['catch']) || ! is_subclass_of($array['catch'], EventExceptionHandler::class))) {
                 throw new InvalidArgumentException('The catch key must be a class that implements EventExceptionHandler');
             }
 
             self::isMigrateFresh();
 
-            static::$event(fn(self $model) => Bus::chain($jobs->map(fn($job) => new $job($model)))
-                ->when(isset($array['catch']), fn(PendingChain $chain) => $chain->catch(new $array['catch']))
+            static::$event(fn (self $model) => Bus::chain($jobs->map(fn ($job) => new $job($model)))
+                ->when(isset($array['catch']), fn (PendingChain $chain) => $chain->catch(new $array['catch']))
                 ->dispatch()
             );
         });

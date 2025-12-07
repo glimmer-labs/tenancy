@@ -4,7 +4,6 @@ namespace Glimmer\Tenancy\Services;
 
 use Closure;
 use Glimmer\Tenancy\Exceptions\TenantIsForbidden;
-use Glimmer\Tenancy\Http\Middleware\ForbidsTenant;
 use Illuminate\Http\Request;
 use Spatie\Multitenancy\Exceptions\NoCurrentTenant;
 

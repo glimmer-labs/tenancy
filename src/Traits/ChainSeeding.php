@@ -19,7 +19,7 @@ trait ChainSeeding
 
     public function dispatchSeeders(): void
     {
-        Landlord::execute(fn() => Bus::chain($this->jobs)->dispatch());
+        Landlord::execute(fn () => Bus::chain($this->jobs)->dispatch());
     }
 
     public function chain(string|array $seeders): void
@@ -28,7 +28,7 @@ trait ChainSeeding
             if ($seeder instanceof Closure) {
                 $this->checkSerializableClosureInMaybeTenantAware();
                 $tenant = Tenant::current();
-                $this->jobs[] = fn() => $tenant->execute($seeder);
+                $this->jobs[] = fn () => $tenant->execute($seeder);
             } else {
                 if (is_string($seeder) && class_exists($seeder) && is_subclass_of($seeder, Seeder::class)) {
                     $this->jobs[] = new SeedDatabase(Tenant::current(), $seeder);
@@ -39,7 +39,7 @@ trait ChainSeeding
 
     public function checkSerializableClosureInMaybeTenantAware(): void
     {
-        if ( ! in_array(SerializableClosure::class, Config::get('multitenancy.maybe_tenant_aware_jobs'))) {
+        if (! in_array(SerializableClosure::class, Config::get('multitenancy.maybe_tenant_aware_jobs'))) {
             throw SerializableClosureIsNotMaybeTenantAware::make();
         }
     }
