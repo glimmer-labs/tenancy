@@ -5,18 +5,13 @@ use Glimmer\Tenancy\Jobs\TenantEvents\SeedDatabase;
 use Glimmer\Tenancy\Models\Tenant;
 use Glimmer\Tenancy\Tasks\SwitchDatabaseConnectionTask;
 use Glimmer\Tenancy\Tests\Stubs\Seeders\AnotherTestSeeder;
+use Glimmer\Tenancy\Tests\Stubs\Seeders\ChainSeeder;
 use Glimmer\Tenancy\Tests\Stubs\Seeders\TestSeeder;
-use Glimmer\Tenancy\Traits\ChainSeeding;
 use Illuminate\Support\Facades\Config;
 use Laravel\SerializableClosure\SerializableClosure;
 
-class TestClass
-{
-    use ChainSeeding;
-}
-
 beforeEach(function () {
-    $this->testClass = new TestClass;
+    $this->testClass = new ChainSeeder;
     $this->tenant = Tenant::factory()->create();
 
     Config::set('multitenancy.switch_tenant_tasks', [SwitchDatabaseConnectionTask::class]);
@@ -74,6 +69,6 @@ it('throws exception when SerializableClosure is not registered as maybe tenant 
         // Test closure
     };
 
-    expect(fn() => $this->testClass->chain([$closure]))
+    expect(fn () => $this->testClass->chain([$closure]))
         ->toThrow(SerializableClosureIsNotMaybeTenantAware::class);
 });
