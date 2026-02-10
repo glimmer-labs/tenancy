@@ -66,7 +66,6 @@ class TenancyServiceProvider extends ServiceProvider
     }
 
     // @codeCoverageIgnoreStart
-
     public function provides(): array
     {
         return [SpatieTenantsArtisanCommand::class];

@@ -38,3 +38,15 @@ it('dispatches job on delete', function () {
 
     Queue::assertPushed(SynchronizeSharedModel::class, 1);
 });
+
+it('dispatches job on restore', function () {
+    Queue::fake([
+        SynchronizeSharedModel::class,
+    ]);
+
+    $this->tempUser->saveQuietly();
+
+    $this->tempUser->restore();
+
+    Queue::assertPushed(SynchronizeSharedModel::class, 1);
+});

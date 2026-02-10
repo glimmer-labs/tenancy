@@ -14,6 +14,7 @@ beforeEach(function () {
 
     $this->tenant->execute(function () {
         Artisan::call('migrate');
+        Artisan::call('migrate', ['--path' => __DIR__.'/../../Stubs/database/migrations', '--realpath' => true]);
 
         $this->user = User::createQuietly([
             'name' => 'test',
@@ -44,4 +45,18 @@ it('deletes model on landlord database when deleted on tenant', function () {
     });
 
     expect(User::find($this->user->getKey()))->toBeNull();
+});
+
+it('restores model on landlord database when restored on tenant', function () {
+    $this->user->deleteQuietly();
+
+    expect(User::find($this->user->getKey()))->toBeNull();
+
+    $this->tenant->execute(function () {
+        $this->user->restore();
+        $job = (new SynchronizeSharedModel($this->user::class, $this->user->getKey()));
+        $job->handle();
+    });
+
+    expect(User::find($this->user->getKey()))->not->toBeNull();
 });

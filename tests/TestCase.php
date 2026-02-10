@@ -34,6 +34,7 @@ abstract class TestCase extends Orchestra
         );
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/Stubs/database/migrations');
     }
 
     protected function getPackageProviders($app): array
@@ -47,7 +48,7 @@ abstract class TestCase extends Orchestra
         ];
     }
 
-    protected function bootCommands()
+    protected function bootCommands(): static
     {
         Artisan::starting(function ($artisan) {
             $artisan->resolveCommands([
