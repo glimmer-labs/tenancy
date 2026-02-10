@@ -1,6 +1,7 @@
 <?php
 
 use Glimmer\Tenancy\Actions\MakeQueueMaybeTenantAwareAction;
+use Glimmer\Tenancy\Jobs\Concerns\MaybeTenantAware;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Mail\SendQueuedMailable;
@@ -9,6 +10,8 @@ use Illuminate\Queue\CallQueuedClosure;
 use Spatie\Multitenancy\Actions\ForgetCurrentTenantAction;
 use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
+use Spatie\Multitenancy\Jobs\NotTenantAware;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
 return [
     /*
@@ -128,6 +131,21 @@ return [
         CallQueuedListener::class => 'class',
         BroadcastEvent::class => 'event',
     ],
+
+    /*
+    * Interface that once implemented, will make the job tenant aware
+    */
+    'tenant_aware_interface' => TenantAware::class,
+
+    /*
+     * Interface that once implemented, will make the job not tenant aware
+     */
+    'not_tenant_aware_interface' => NotTenantAware::class,
+
+    /*
+     * Interface that once implemented, will make the job maybe tenant aware
+     */
+    'maybe_tenant_aware_interface' => MaybeTenantAware::class,
 
     /*
      * Jobs tenant aware even if these don't implement the TenantAware interface.

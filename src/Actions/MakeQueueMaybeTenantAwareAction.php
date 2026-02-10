@@ -31,7 +31,8 @@ class MakeQueueMaybeTenantAwareAction extends MakeQueueTenantAwareAction
                 $reflection = $this->getJobReflection($event);
 
                 if (
-                    ! $reflection->implementsInterface(MaybeTenantAware::class) &&
+                    ! $reflection->implementsInterface(config('multitenancy.maybe_tenant_aware_interface',
+                        MaybeTenantAware::class)) &&
                     ! in_array($reflection->name, config('multitenancy.maybe_tenant_aware_jobs'))
                 ) {
                     $event->job->delete();
@@ -54,10 +55,18 @@ class MakeQueueMaybeTenantAwareAction extends MakeQueueTenantAwareAction
         $tenantId = Context::get($this->currentTenantContextKey());
 
         if (! $tenantId) {
+            if ($event instanceof JobProcessing) {
+                $event->job->delete();
+            }
+
             throw CurrentTenantCouldNotBeDeterminedInTenantAwareJob::noIdSet($event);
         }
 
         if (! $tenant = app(IsTenant::class)::find($tenantId)) {
+            if ($event instanceof JobProcessing) {
+                $event->job->delete();
+            }
+
             throw CurrentTenantCouldNotBeDeterminedInTenantAwareJob::noTenantFound($event);
         }
 
