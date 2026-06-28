@@ -1,5 +1,7 @@
 <?php
 
+use Glimmer\Tenancy\Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -11,8 +13,8 @@
 |
 */
 
-pest()->extend(Glimmer\Tenancy\Tests\TestCase::class)->in('Feature');
-pest()->extend(Glimmer\Tenancy\Tests\TestCase::class)->in('Unit');
+pest()->extend(TestCase::class)->in('Feature');
+pest()->extend(TestCase::class)->in('Unit');
 
 /*
 |--------------------------------------------------------------------------

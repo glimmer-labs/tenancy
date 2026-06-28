@@ -13,7 +13,7 @@ beforeEach(function () {
 });
 
 test('switch prefixes local disk', function () {
-    $disk = \Illuminate\Support\Facades\Storage::disk('local');
+    $disk = Illuminate\Support\Facades\Storage::disk('local');
 
     $this->tenant->makeCurrent();
 
@@ -21,7 +21,7 @@ test('switch prefixes local disk', function () {
 });
 
 test('switching tenant will switch disk prefixes', function () {
-    $disk = \Illuminate\Support\Facades\Storage::disk('public');
+    $disk = Illuminate\Support\Facades\Storage::disk('public');
 
     $this->tenant->makeCurrent();
 
