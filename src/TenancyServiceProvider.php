@@ -31,6 +31,7 @@ class TenancyServiceProvider extends ServiceProvider
         }
 
         $this->autoRegisterTenancyRoutes();
+        $this->app->register(TenantEventsServiceProvider::class);
     }
 
     public function autoRegisterTenancyRoutes(): void

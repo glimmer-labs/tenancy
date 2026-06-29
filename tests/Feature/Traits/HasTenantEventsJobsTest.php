@@ -3,6 +3,7 @@
 use Glimmer\Tenancy\Jobs\TenantEvents\CreateDatabase;
 use Glimmer\Tenancy\Jobs\TenantEvents\MigrateDatabase;
 use Glimmer\Tenancy\Models\Tenant;
+use Glimmer\Tenancy\TenantEventsServiceProvider;
 use Glimmer\Tenancy\Tests\Stubs\ExceptionHandler\CreatedException;
 use Glimmer\Tenancy\Tests\Stubs\Jobs\TenantEventWithException;
 use Illuminate\Support\Facades\Config;
@@ -19,6 +20,7 @@ beforeEach(function () {
     ]);
 
     $this->eventName = 'eloquent.created: Glimmer\Tenancy\Models\Tenant';
+    (new TenantEventsServiceProvider(app()))->boot();
 });
 
 it('has `created` event with it\'s chain jobs', function () {
@@ -65,6 +67,7 @@ it('calls `catch` invokable callback', function () {
             'catch' => CreatedException::class,
         ],
     ]);
+    (new TenantEventsServiceProvider(app()))->boot();
 
     expect(fn () => Tenant::factory()->create())->toThrow('CreatedException');
 });
@@ -77,5 +80,5 @@ it("throws error when `catch` doesn't implements EventExceptionHandler", functio
         ],
     ]);
 
-    expect(fn () => Tenant::factory()->create())->toThrow(InvalidArgumentException::class);
+    expect(fn () => (new TenantEventsServiceProvider(app()))->boot())->toThrow(InvalidArgumentException::class);
 });
