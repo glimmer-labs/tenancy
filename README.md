@@ -58,10 +58,10 @@ php artisan vendor:publish --provider="Glimmer\Tenancy\TenancyServiceProvider"
 
 - `DomainTenantFinder` – Finds the tenant by matching the request domain with the entries in the tenant model’s `hosts`
   array.
-- `SubdomainTenantFinder` – Identifies the tenant using the subdomain from the request, based on the `hosts` array in
+- `SubDomainTenantFinder` – Identifies the tenant using the subdomain from the request, based on the `hosts` array in
   the model.
 - `PathTenantFinder` – Determines the tenant by extracting its ID from the request path.
-- `DomainAndSubdomainTenantFinder` – Matches tenants using either the request’s domain or subdomain.
+- `DomainAndSubDomainTenantFinder` – Matches tenants using either the request’s domain or subdomain.
 
 > The `hosts` array in the tenant model can contain a list of either domains or subdomains.
 
@@ -138,28 +138,31 @@ Glimmer's `Tenant` model).
 
 ### Extended functionality:
 
-- **Tenant Model** – `Glimmer/Tenancy/Models/Tenant` extends `Spatie\Multitenancy\Models\Tenant` with
+- **Tenant Model** – `Glimmer\Tenancy\Models\Tenant` extends `Spatie\Multitenancy\Models\Tenant` with
   additional functionality as running events and determining the database name as expected.
 - **Separated Route Files** – Landlord (landlord.php) and tenant (tenant.php) routes are managed separately, while
   `web.php` remains shared.
-- **`IsSharedModel` trait** – Enables models to be shared between tenants and the landlord, ensuring synchronization
-  across instances.
+- **`IsSharedModel` trait** – Dispatches synchronization jobs when a model is saved or deleted so shared model records
+  can be kept in sync across the landlord and tenant databases. Add the trait to the model that should be synchronized.
 - **Automatic Route Registration** – Routes are automatically registered and assigned appropriate middlewares to prevent
   unauthorized access (this can be disabled in `multitenancy.php` config).
     - Tenant routes includes `NeedsTenant` and `EnsureValidTenantSession` middleware by default.
     - Landlord routes includes `ForbidsTenant` `EnsureNoTenantSession` middleware by default.
     - When using route auto-registration tenant routes names are prefixed with `tenant.` and landlord routes with
       `landlord.`.
-    - If auto-registration is disabled, use `TenancyRoutes::landlord()` and/or `TenancyRoutes::tenant()` to register
+    - If auto-registration is disabled, use `TenancyRoute::landlord()` and/or `TenancyRoute::tenant()` to register
       them by hand and group the routes you need.
     ```php
-      TenancyRoutes::landlord()->group(function () {
+      use Illuminate\Support\Facades\Route;
+      use Glimmer\Tenancy\Facades\TenancyRoute;
+
+      TenancyRoute::landlord()->group(function () {
         Route::get('/dashboard', function () {
             return 'Landlord dashboard';
         })->name('dashboard');
       });
 
-      TenancyRoutes::tenant()->group(function () {
+      TenancyRoute::tenant()->group(function () {
           Route::get('/home', function () {
               return 'Tenant home';
           })->name('home');
